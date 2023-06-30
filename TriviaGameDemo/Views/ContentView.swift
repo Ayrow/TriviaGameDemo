@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 40) {
                 VStack(spacing: 20) {
                     Text("Trivia Game")

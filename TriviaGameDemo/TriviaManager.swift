@@ -1,0 +1,43 @@
+//
+//  TriviaManager.swift
+//  TriviaGameDemo
+//
+//  Created by Aymeric Pilaert on 30/06/2023.
+//
+
+import Foundation
+
+class TriviaManager: ObservableObject {
+    private(set) var trivia: [Trivia.Result] = []
+    @Published private(set) var length = 0
+    
+    init() {
+        Task.init {
+            await fetchTrivia()
+        }
+    }
+    
+    func fetchTrivia() async {
+        guard let url = URL(string: "") else {fatalError("Missing url")}
+        
+        let urlRequest = URLRequest(url: url)
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: urlRequest)
+            guard (response as? HTTPURLResponse)?.statusCode == 200 else {fatalError("Error while fetching data")}
+            
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            let decodedData = try decoder.decode(Trivia.self, from: data)
+            
+            DispatchQueue.main.async {
+                self.trivia = decodedData.results
+                self.length = self.trivia.count
+            }
+            
+        } catch {
+            print("Error fetching trivia: \(error)")
+        }
+        
+    }
+}
