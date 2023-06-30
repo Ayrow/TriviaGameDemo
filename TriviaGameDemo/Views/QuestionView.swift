@@ -26,7 +26,14 @@ struct QuestionView: View {
                     .font(.system(size: 20))
                     .bold()
                     .foregroundColor(.gray)
+                
+                AnswerRow(answer: Answer(text: "Yes it is", isCorrect: true))
+                AnswerRow(answer: Answer(text: "No it is not", isCorrect: false))
             }
+            
+            PrimaryButton(text: "Next")
+            
+            Spacer()
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
