@@ -6,10 +6,17 @@
 //
 
 import Foundation
+import SwiftUI
 
 class TriviaManager: ObservableObject {
     private(set) var trivia: [Trivia.Result] = []
     @Published private(set) var length = 0
+    @Published private(set) var index = 0
+    @Published private(set) var reachedEnd = false
+    @Published private(set) var answerSelected = false
+    @Published private(set) var question: AttributedString = ""
+    @Published private(set) var answerChoices: [Answer] = []
+    @Published private(set) var progress: CGFloat = 0.00
     
     init() {
         Task.init {
@@ -33,6 +40,7 @@ class TriviaManager: ObservableObject {
             DispatchQueue.main.async {
                 self.trivia = decodedData.results
                 self.length = self.trivia.count
+                self.setQuestion()
             }
             
         } catch {
@@ -40,4 +48,27 @@ class TriviaManager: ObservableObject {
         }
         
     }
+    
+    func goToNextQuestion() {
+        if index + 1 < length {
+            index += 1
+            setQuestion()
+        } else {
+            reachedEnd = true
+        }
+    }
+    
+    func setQuestion() {
+        answerSelected = false
+        progress = CGFloat(Double(index + 1) / Double(length) * 360)
+        
+        if index < length {
+            let currentTriviaQuestion = trivia[index]
+            question = currentTriviaQuestion.formattedQuestion
+            answerChoices = currentTriviaQuestion.answers
+        }
+    }
+    
+    
+    
 }
